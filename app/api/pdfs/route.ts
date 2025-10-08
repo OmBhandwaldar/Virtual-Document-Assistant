@@ -7,6 +7,10 @@ export async function GET() {
     .from("Pdf")
     .select("id, title, filename, preview, uploadedAt")
     .order("uploadedAt", { ascending: false });
+  // const { data, error } = await supabase
+  //   .from("Pdf")
+  //   .select("*")
+  //   .order("uploadedAt", { ascending: false });
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
