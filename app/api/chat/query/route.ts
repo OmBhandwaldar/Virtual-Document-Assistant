@@ -52,11 +52,11 @@ Answer:
 
   // 4️⃣ Ask Gemini for the final answer
   const result = await gemini.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "models/gemini-2.5-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
 
-  const answer = result.response?.text() || "No answer generated.";
+  const answer = result.text || "No answer generated.";
 
   return NextResponse.json({
     answer,
