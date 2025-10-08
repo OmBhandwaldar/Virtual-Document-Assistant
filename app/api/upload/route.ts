@@ -11,6 +11,7 @@ export async function POST(req: Request) {
   try {
     const form = await req.formData();
     const file = form.get("file") as File;
+    const chatId = form.get("chatId") as string | null;
 
     if (!file) {
       console.log("No file uploaded");
@@ -40,6 +41,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
 
+        // ✅ VALIDATION BLOCK (place this here)
+        const prisma = new PrismaClient();
+        if (chatId) {
+          const chatExists = await prisma.chat.findUnique({ where: { id: chatId } });
+          if (!chatExists) {
+            await prisma.$disconnect();
+            return NextResponse.json({ error: "Invalid chatId" }, { status: 400 });
+          }
+        }
+    
+
     console.log("File uploaded successfully, extracting preview...");
 
     // Extract preview text (first ~2000 chars)
@@ -47,7 +59,7 @@ export async function POST(req: Request) {
     console.log("Preview extracted, length:", preview.length);
 
     // Insert into Pdf table using Prisma
-    const prisma = new PrismaClient();
+    // const prisma = new PrismaClient();
     try {
       const pdfRecord = await prisma.pdf.create({
         data: {
@@ -55,6 +67,7 @@ export async function POST(req: Request) {
           filename: fileName,
           storagePath: `pdfs/${fileName}`,
           pages: 0, // optional, can parse later
+          chatId: chatId || null,
           preview,
         },
       });
@@ -67,7 +80,7 @@ export async function POST(req: Request) {
     }
 
     console.log("Successfully uploaded and saved to database");
-    return NextResponse.json({ success: true, filename: fileName });
+    return NextResponse.json({ success: true, filename: fileName, chatId });
   } catch (err: any) {
     console.error("Unexpected error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });

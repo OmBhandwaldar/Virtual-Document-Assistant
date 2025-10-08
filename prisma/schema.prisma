@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -15,52 +9,57 @@ datasource db {
 }
 
 model Pdf {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   title       String
   filename    String
   storagePath String
   pages       Int
-  uploadedAt  DateTime @default(now())
+  uploadedAt  DateTime     @default(now())
   preview     String?
   indexedAt   DateTime?
+  chatId      String?
   chunks      Chunk[]
+  Chat        Chat?        @relation(fields: [chatId], references: [id], onUpdate: NoAction, map: "pdf_chatid_fkey")
   quizzes     Quiz[]
+  embeddings  embeddings[]
 }
 
 model Chunk {
-  id        String   @id @default(uuid())
-  pdfId     String
-  page      Int
-  startChar Int
-  endChar   Int
-  text      String
-  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  id         String      @id @default(uuid())
+  pdfId      String
+  page       Int
+  startChar  Int
+  endChar    Int
+  text       String
+  pdf        Pdf         @relation(fields: [pdfId], references: [id])
+  embeddings embeddings?
 }
 
 model Quiz {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   pdfId     String
   type      String
-  createdAt DateTime @default(now())
-  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  createdAt DateTime   @default(now())
   questions Question[]
+  pdf       Pdf        @relation(fields: [pdfId], references: [id])
 }
 
 model Question {
-  id           String   @id @default(uuid())
+  id           String @id @default(uuid())
   quizId       String
   text         String
   options      Json
   correctIndex Int
   explanation  String
-  quiz         Quiz      @relation(fields: [quizId], references: [id])
+  quiz         Quiz   @relation(fields: [quizId], references: [id])
 }
 
 model Chat {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   title     String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   messages  Message[]
+  Pdf       Pdf[]
 }
 
 model Message {
@@ -69,5 +68,19 @@ model Message {
   role      String
   content   String
   createdAt DateTime @default(now())
-  chat      Chat      @relation(fields: [chatId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id])
+}
+
+model embeddings {
+  id         String                 @id @default(dbgenerated("(gen_random_uuid())::text"))
+  pdf_id     String?
+  chunk_id   String?                @unique
+  content    String?
+  embedding  Unsupported("vector")?
+  page       Int?
+  created_at DateTime?              @default(now()) @db.Timestamptz(6)
+  Chunk      Chunk?                 @relation(fields: [chunk_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Pdf        Pdf?                   @relation(fields: [pdf_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([embedding], map: "embeddings_embedding_cos_idx")
 }

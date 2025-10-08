@@ -16,20 +16,36 @@
 
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
-import ChatInterface from "@/components/ChatInterface";
 import PDFViewer from "@/components/PDFViewer";
-import QuizGenerator from "@/components/QuizGenerator";
-import ProgressDashboard from "@/components/ProgressDashboard";
 import { Button } from "@/components/ui/button";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import ProgressDashboard from "@/components/ProgressDashboard";
+import QuizGenerator from "@/components/QuizGenerator";
+import ChatInterface from "@/components/ChatInterface";
+
+interface PDFFile {
+  id: string;
+  name: string;
+  file: File;
+}
 
 interface Chat {
   id: string;
   title: string;
   timestamp: Date;
   messages: Message[];
+  pdfs: PDFFile[]; // ✅ added this line
   quizHistory: QuizResult[];
 }
+
+
+// interface Chat {
+//   id: string;
+//   title: string;
+//   timestamp: Date;
+//   messages: Message[];
+//   quizHistory: QuizResult[];
+// }
 
 interface Message {
   id: string;
@@ -81,10 +97,12 @@ export default function Home() {
     fetchPDFs();
   }, []);
 
-  async function fetchPDFs() {
+  async function fetchPDFs(chatId?: string | null) { // ✅ added chatId param
     setIsLoading(true);
     try {
-      const res = await fetch("/api/pdfs");
+      // ✅ updated to request PDFs filtered by chatId
+      const url = chatId ? `/api/pdfs?chatId=${chatId}` : "/api/pdfs";
+      const res = await fetch(url);
       const data = await res.json();
       setPdfs(data || []);
     } catch (err) {
@@ -93,27 +111,87 @@ export default function Home() {
       setIsLoading(false);
     }
   }
+  
 
   // 🧠 Chat handling
-  const handleNewChat = () => {
-    const newChat: Chat = {
-      id: Date.now().toString(),
-      title: "New Chat",
-      timestamp: new Date(),
-      messages: [],
-      quizHistory: [],
-    };
-    setChats((prev) => [newChat, ...prev]);
-    setActiveChat(newChat.id);
-    setCurrentView("chat");
-    setIsMobileOpen(false);
+  // const handleNewChat = () => {
+  //   const newChat: Chat = {
+  //     id: Date.now().toString(),
+  //     title: "New Chat",
+  //     timestamp: new Date(),
+  //     messages: [],
+  //     pdfs: [], // ✅ ensure each chat starts with its own empty PDF list
+  //     quizHistory: [],
+  //   };
+  //   setChats((prev) => [newChat, ...prev]);
+  //   setActiveChat(newChat.id);
+  //   setActivePDF(null);
+  //   setCurrentView("chat");
+  //   setIsMobileOpen(false);
+
+  //   // ✅ optional: fetch PDFs for the new chat (should be empty initially)
+  //   fetchPDFs(newChat.id);
+
+  // };
+  const handleNewChat = async () => {
+    setIsLoading(true);
+    try {
+      // 🧩 Step 1: Create the chat in database (API call)
+      const res = await fetch("/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: "New Chat" }),
+      });
+  
+      if (!res.ok) throw new Error("Failed to create chat");
+  
+      // 🧩 Step 2: Get chat record from DB (contains id + createdAt)
+      const chatFromDB = await res.json();
+  
+      // 🧩 Step 3: Create local chat object (with same DB id)
+      const newChat: Chat = {
+        id: chatFromDB.id, // ✅ use DB-generated UUID
+        title: chatFromDB.title,
+        timestamp: new Date(chatFromDB.createdAt),
+        messages: [],
+        pdfs: [], // ✅ each chat starts with its own PDFs
+        quizHistory: [],
+      };
+  
+      // 🧩 Step 4: Update local state
+      setChats((prev) => [newChat, ...prev]);
+      setActiveChat(newChat.id);
+      setActivePDF(null);
+      setCurrentView("chat");
+      setIsMobileOpen(false);
+  
+      // 🧩 Step 5: Fetch PDFs for the chat (will be empty initially)
+      fetchPDFs(newChat.id);
+  
+    } catch (err) {
+      console.error("Error creating chat:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
+
+  // const handleSelectChat = (id: string) => {
+  //   setActiveChat(id);
+  //   setCurrentView("chat");
+  //   setIsMobileOpen(false);
+  // };
 
   const handleSelectChat = (id: string) => {
     setActiveChat(id);
+    setActivePDF(null);
     setCurrentView("chat");
     setIsMobileOpen(false);
+  
+    // ✅ load PDFs for the selected chat
+    fetchPDFs(id);
   };
+  
 
   // 🔹 PDF Selection
   const handleSelectPDF = async (id: string | null) => {
@@ -130,24 +208,94 @@ export default function Home() {
   };
 
   // 🔹 Upload PDFs
+  // const handleUploadPDF = async (files: FileList) => {
+  //   setIsLoading(true);
+  //   setStatus("📤 Uploading PDF...");
+
+  //   const formData = new FormData();
+  //   formData.append("file", files[0]);
+
+  //   if (activeChat) {
+  //     formData.append("chatId", activeChat);
+  //   }
+
+  //   try {
+  //     const res = await fetch("/api/upload", { method: "POST", body: formData });
+  //     if (!res.ok) throw new Error("Upload failed");
+  //     await fetchPDFs(activeChat);
+  //     setStatus("✅ Uploaded successfully!");
+  //   } catch (err) {
+  //     console.error("Upload error:", err);
+  //     setStatus("❌ Upload failed");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  // const handleUploadPDF = async (files: FileList) => {
+  //   if (!activeChat) {
+  //     alert("Please create or select a chat first!");
+  //     return;
+  //   }
+  
+  //   setIsLoading(true);
+  //   setStatus("📤 Uploading PDF...");
+  
+  //   const formData = new FormData();
+  //   formData.append("file", files[0]);
+  //   formData.append("chatId", activeChat); // ✅ added line
+  
+  //   try {
+  //     const res = await fetch("/api/upload", { method: "POST", body: formData });
+  //     if (!res.ok) throw new Error("Upload failed");
+  //     await fetchPDFs(activeChat); // ✅ fetch PDFs for that chat
+  //     setStatus("✅ Uploaded successfully!");
+  //   } catch (err) {
+  //     console.error("Upload error:", err);
+  //     setStatus("❌ Upload failed");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const handleUploadPDF = async (files: FileList) => {
+    if (!activeChat) {
+      alert("⚠️ Please create or select a chat first!");
+      return;
+    }
+  
+    if (!files || files.length === 0) {
+      alert("⚠️ No file selected!");
+      return;
+    }
+  
     setIsLoading(true);
     setStatus("📤 Uploading PDF...");
+  
     const formData = new FormData();
     formData.append("file", files[0]);
-
+    formData.append("chatId", activeChat); // ✅ still include chatId for DB relation
+  
     try {
+      // 🧩 Upload to /api/upload
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Upload failed");
-      await fetchPDFs();
+  
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Upload failed");
+      }
+  
+      // 🧩 After successful upload, re-fetch PDFs for the same chat
+      await fetchPDFs(activeChat);
+  
+      // 🧩 Success feedback
       setStatus("✅ Uploaded successfully!");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Upload error:", err);
-      setStatus("❌ Upload failed");
+      setStatus(`❌ Upload failed: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   // 🔹 Index PDFs (chunking)
   const handleIndex = async (pdfId: string) => {
