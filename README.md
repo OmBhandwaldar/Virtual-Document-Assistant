@@ -9,7 +9,7 @@
 This project is an AI-powered Learning Assistant that enables students to upload, view, and interact with their study materials.
 It supports PDF ingestion, quiz generation, progress tracking, and Retrieval-Augmented Generation (RAG) based intelligent Q&A.
 
-Students can upload course PDFs (like NCERT Physics books), generate quizzes, attempt them, track performance, and even chat with an AI tutor — all in one modern interface.
+Students can upload course PDFs (like NCERT Physics books), generate quizzes, attempt them, track performance, and even chat with an AI tutor - all in one modern interface.
 
 ---
 
@@ -32,7 +32,7 @@ Students can upload course PDFs (like NCERT Physics books), generate quizzes, at
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------- |
 | Chat UI (Virtual Tutor)    | ChatGPT-style interface with a sidebar for managing chats.                                                         | Done        |
 | RAG Answers with Citations | AI answers user questions with page citations and quoted text from uploaded PDFs using pgvector similarity search. | Done        |
-| YouTube Video Recommender  | Suggests topic-related educational videos from YouTube based on PDF context.                                       | In Progress |
+
 
 ---
 
@@ -58,7 +58,7 @@ This enables precise, explainable, and source-grounded responses.
 | Layer      | Tools / Frameworks                                          |
 | ---------- | ----------------------------------------------------------- |
 | Frontend   | Next.js 14 (App Router), TypeScript, TailwindCSS, ShadCN/UI |
-| Backend    | Next.js API Routes, Node.js                                 |
+| Backend    | Next.js API Routes                              |
 | Database   | Supabase PostgreSQL with pgvector                           |
 | ORM        | Prisma ORM                                                  |
 | AI / LLM   | Google Gemini API (Gemini 2.0 Flash + Embedding 001)        |
@@ -130,8 +130,8 @@ Frontend Displays → PDF, Chat, Quiz, Progress
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/beyondchats-learning-assistant.git
-cd beyondchats-learning-assistant
+git clone https://github.com/OmBhandwaldar/Virtual-Document-Assistant.git
+cd Virtual-Document-Assistant
 ```
 
 ### Step 2: Install Dependencies
@@ -238,7 +238,6 @@ Each quiz submission is stored as a QuizAttempt:
 
 * YouTube video recommender from YouTube API
 * AI tutor mode with memory
-* Enhanced progress dashboard
 * Multi-user authentication
 * Export quiz results to PDF
 
@@ -256,7 +255,7 @@ Each quiz submission is stored as a QuizAttempt:
 ## Author
 
 **Om Bhandwaldar**
-Full Stack Web Developer | Next.js | Node.js | PostgreSQL | DevOps
-Email: [ombhandwaldar@example.com](mailto:ombhandwaldar@example.com)
+Full Stack Web Developer | Next.js | Node.js | PostgreSQL | DevOps | AWS
+Email: [ombhandwaldar@example.com](mailto:bhandwaldarom15@gmail.com)
 LinkedIn: [linkedin.com/in/ombhandwaldar](https://linkedin.com/in/ombhandwaldar)
 
