@@ -36,30 +36,39 @@ model Chunk {
 }
 
 model Quiz {
-  id        String     @id @default(uuid())
-  pdfId     String
-  type      String
-  createdAt DateTime   @default(now())
-  questions Question[]
-  pdf       Pdf        @relation(fields: [pdfId], references: [id])
+  id          String        @id @default(uuid())
+  pdfId       String?
+  type        String
+  createdAt   DateTime      @default(now())
+  chatId      String?
+  pdfScope    Json?
+  questions   Question[]
+  pdf         Pdf?          @relation(fields: [pdfId], references: [id])
+  Chat        Chat?         @relation(fields: [chatId], references: [id], onUpdate: NoAction, map: "quiz_chatid_fkey")
+  QuizAttempt QuizAttempt[]
 }
 
 model Question {
-  id           String @id @default(uuid())
-  quizId       String
-  text         String
-  options      Json
-  correctIndex Int
-  explanation  String
-  quiz         Quiz   @relation(fields: [quizId], references: [id])
+  id                String  @id @default(uuid())
+  quizId            String
+  text              String
+  options           Json?
+  correctIndex      Int?
+  explanation       String
+  correctAnswerText String?
+  meta              Json?
+  type              String? @default("MCQ")
+  quiz              Quiz    @relation(fields: [quizId], references: [id])
 }
 
 model Chat {
-  id        String    @id @default(uuid())
-  title     String
-  createdAt DateTime  @default(now())
-  messages  Message[]
-  Pdf       Pdf[]
+  id          String        @id @default(uuid())
+  title       String
+  createdAt   DateTime      @default(now())
+  messages    Message[]
+  Pdf         Pdf[]
+  Quiz        Quiz[]
+  QuizAttempt QuizAttempt[]
 }
 
 model Message {
@@ -71,14 +80,27 @@ model Message {
   chat      Chat     @relation(fields: [chatId], references: [id])
 }
 
+model QuizAttempt {
+  id        String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  quizid    String
+  chatid    String
+  score     Int
+  total     Int
+  breakdown Json?
+  answers   Json
+  createdat DateTime? @default(now()) @db.Timestamptz(6)
+  Chat      Chat      @relation(fields: [chatid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Quiz      Quiz      @relation(fields: [quizid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
 model embeddings {
   id         String                 @id @default(dbgenerated("(gen_random_uuid())::text"))
   pdf_id     String?
   chunk_id   String?                @unique
   content    String?
-  embedding  Unsupported("vector")?
   page       Int?
   created_at DateTime?              @default(now()) @db.Timestamptz(6)
+  embedding  Unsupported("vector")?
   Chunk      Chunk?                 @relation(fields: [chunk_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   Pdf        Pdf?                   @relation(fields: [pdf_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
