@@ -29,7 +29,7 @@ export function buildQuizPrompt(context: string, counts: { mcq: number; saq: num
   }
   
   /** Try to parse JSON, even if the model added stray text. */
-  export function safeJsonParse<T = any>(raw: string): T {
+  export function safeJsonParse<T = unknown>(raw: string): T {
     try {
       return JSON.parse(raw) as T;
     } catch {

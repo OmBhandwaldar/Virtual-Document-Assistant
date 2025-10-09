@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
@@ -10,11 +10,22 @@ import {
   ZoomOut,
   FileText,
 } from "lucide-react";
+
+// Import CSS files for react-pdf
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-// Set up PDF.js worker (react-pdf requirement)
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+// Dynamically import react-pdf components to avoid SSR issues
+const Document = dynamic(
+  () => import("react-pdf").then((mod) => mod.Document),
+  { ssr: false }
+);
+
+const Page = dynamic(
+  () => import("react-pdf").then((mod) => mod.Page),
+  { ssr: false }
+);
 
 interface PDFViewerProps {
   file?: File | null;           // optional local File
@@ -33,6 +44,16 @@ export default function PDFViewer({
   const [pageNumber, setPageNumber] = useState<number>(initialPage);
   const [scale, setScale] = useState<number>(1.0);
   const [error, setError] = useState<string>("");
+
+  // Set up PDF.js worker client-side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Import react-pdf and set up worker
+      import("react-pdf").then((mod) => {
+        mod.pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${mod.pdfjs.version}/build/pdf.worker.min.mjs`;
+      });
+    }
+  }, []);
 
   // Prefer File if provided, else fall back to URL
   const src: File | string | null = file ? file : fileUrl ? fileUrl : null;
