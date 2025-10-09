@@ -9,13 +9,12 @@
 This project is an AI-powered Learning Assistant that enables students to upload, view, and interact with their study materials.
 It supports PDF ingestion, quiz generation, progress tracking, and Retrieval-Augmented Generation (RAG) based intelligent Q&A.
 
-Students can upload course PDFs (like NCERT Physics books), generate quizzes, attempt them, track performance, and even chat with an AI tutor - all in one modern interface.
+Students/Users can upload course PDFs (like NCERT Physics books), generate quizzes, attempt them, track performance, and even chat with an AI tutor - all in one modern interface.
 
 ---
 
 ## Features
 
-### Must-Have Features
 
 | Feature               | Description                                                                                                                   | Status |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------ |
@@ -23,8 +22,26 @@ Students can upload course PDFs (like NCERT Physics books), generate quizzes, at
 | PDF Viewer            | Integrated viewer with zoom, pagination, and responsive layout beside chat.                                                   | Done   |
 | Quiz Generator Engine | Uses Gemini API to generate MCQs, SAQs, and LAQs. Automatically evaluates answers, provides explanations, and stores results. | Done   |
 | Progress Tracking     | Tracks performance per chat (QuizAttempt table) with score, breakdown, and history.                                           | Done   |
-| Chat UI (Virtual Tutor) | ChatGPT-style interface with a sidebar for managing chats.                                                         | Done   |
+| Chat UI (Virtual Tutor) | ChatGPT-style interface with a sidebar for managing multiple chats.                                                         | Done   |
 | RAG Answers with Citations | AI answers user questions with page citations and quoted text from uploaded PDFs using pgvector similarity search. | Done   |
+
+
+
+
+---
+
+## Tech Stack
+
+| Layer      | Tools / Frameworks                                          |
+| ---------- | ----------------------------------------------------------- |
+| Frontend   | Next.js 14 (App Router), TypeScript, TailwindCSS, ShadCN/UI |
+| Backend    | Next.js API Routes                              |
+| Database   | Supabase PostgreSQL with pgvector                           |
+| ORM        | Prisma ORM                                                  |
+| AI / LLM   | Google Gemini API (Gemini 2.0 Flash + Embedding 001)        |
+| Storage    | Supabase Storage                                            |
+| Deployment | Vercel                                                      |
+
 
 
 ---
@@ -44,19 +61,6 @@ The system uses a Retrieval-Augmented Generation (RAG) approach to generate cont
 
 This enables precise, explainable, and source-grounded responses.
 
----
-
-## Tech Stack
-
-| Layer      | Tools / Frameworks                                          |
-| ---------- | ----------------------------------------------------------- |
-| Frontend   | Next.js 14 (App Router), TypeScript, TailwindCSS, ShadCN/UI |
-| Backend    | Next.js API Routes                              |
-| Database   | Supabase PostgreSQL with pgvector                           |
-| ORM        | Prisma ORM                                                  |
-| AI / LLM   | Google Gemini API (Gemini 2.0 Flash + Embedding 001)        |
-| Storage    | Supabase Storage                                            |
-| Deployment | Vercel                                                      |
 
 ---
 
@@ -184,15 +188,6 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
----
-
-## Deployment (Vercel)
-
-1. Push the project to GitHub.
-2. Go to [Vercel](https://vercel.com) and click **Import Project**.
-3. Select the repository.
-4. Add all environment variables under **Settings → Environment Variables**.
-5. Deploy.
 
 ---
 
@@ -204,14 +199,6 @@ Each quiz submission is stored as a QuizAttempt:
 * Used to compute overall learning progress.
 * Enables the user to review mistakes and explanations.
 
----
-
-## UI Highlights
-
-* Modern design using ShadCN/UI and TailwindCSS.
-* Split-view interface: PDF on right, Chat/Quiz on left.
-* Adaptive layout for desktop and mobile.
-* Color-coded quiz feedback (correct / wrong).
 
 ---
 
@@ -221,7 +208,7 @@ Each quiz submission is stored as a QuizAttempt:
 | -------------------------- | ------------------------------------------------ |
 | Next.js App Router         | Simplifies API and frontend integration          |
 | Gemini over OpenAI         | Better embedding integration and cost efficiency |
-| Supabase instead of AWS S3 | Easier management + built-in Postgres            |
+| Supabase Database/Storage | Easier management + built-in Postgres            |
 | Manual chunking trigger    | Easier control for debugging                     |
 | Vector size 1536           | Compatible with Gemini embeddings                |
 
@@ -229,10 +216,11 @@ Each quiz submission is stored as a QuizAttempt:
 
 ## Future Enhancements
 
-* YouTube video recommender from YouTube API
-* AI tutor mode with memory
-* Multi-user authentication
+* One-click flowchart generation
 * Export quiz results to PDF
+* Multi-user authentication
+* YouTube video recommender from YouTube API
+
 
 ---
 
