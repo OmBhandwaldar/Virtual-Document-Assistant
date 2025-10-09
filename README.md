@@ -16,14 +16,14 @@ Students/Users can upload course PDFs (like NCERT Physics books), generate quizz
 ## Features
 
 
-| Feature               | Description                                                                                                                   | Status |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------ |
-| Source Selector       | Allows selecting between All PDFs or specific PDFs. Supports uploading new PDFs for embedding and quiz generation.            | Done   |
-| PDF Viewer            | Integrated viewer with zoom, pagination, and responsive layout beside chat.                                                   | Done   |
-| Quiz Generator Engine | Uses Gemini API to generate MCQs, SAQs, and LAQs. Automatically evaluates answers, provides explanations, and stores results. | Done   |
-| Progress Tracking     | Tracks performance per chat (QuizAttempt table) with score, breakdown, and history.                                           | Done   |
-| Chat UI (Virtual Tutor) | ChatGPT-style interface with a sidebar for managing multiple chats.                                                         | Done   |
-| RAG Answers with Citations | AI answers user questions with page citations and quoted text from uploaded PDFs using pgvector similarity search. | Done   |
+| Feature               | Description                                                                                                                  
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- 
+| Source Selector       | Allows selecting between All PDFs or specific PDFs. Supports uploading new PDFs for embedding and quiz generation.          
+| PDF Viewer            | Integrated viewer with zoom, pagination, and responsive layout beside chat.                                                   
+| Quiz Generator Engine | Uses Gemini API to generate MCQs, SAQs, and LAQs. Automatically evaluates answers, provides explanations, and stores results. 
+| Progress Tracking     | Tracks performance per chat (QuizAttempt table) with score, breakdown, and history.                                          
+| Chat UI (Virtual Tutor) | ChatGPT-style interface with a sidebar for managing multiple chats.                                                        
+| RAG Answers with Citations | AI answers user questions with page citations and quoted text from uploaded PDFs using pgvector similarity search.
 
 
 
@@ -42,6 +42,19 @@ Students/Users can upload course PDFs (like NCERT Physics books), generate quizz
 | Storage    | Supabase Storage                                            |
 | Deployment | Vercel                                                      |
 
+
+---
+
+## 🧭 Getting Started: High-Level Workflow
+
+1. **Click "New Chat"** to create a chat session.  
+2. **Select the chat** from the sidebar.  
+3. **Go to the "PDFs" tab** in the sidebar.  
+4. **Upload one or more PDFs** (one by one).  
+5. **Ask questions** in the chat box.  
+6. **Click "Generate Quiz"** to create a quiz from PDFs.  
+7. **Repeat quiz generation** as needed.  
+8. **View progress** in the "Progress" tab.
 
 
 ---
@@ -116,7 +129,7 @@ Frontend Displays → PDF, Chat, Quiz, Progress
 * Evaluates user answers.
 * Stores attempts in QuizAttempt.
 
-### `/api/rag/query`
+### `/api/chat/query`
 
 * Accepts a question, retrieves top-matching chunks from embeddings, and generates contextual answer with citations.
 
