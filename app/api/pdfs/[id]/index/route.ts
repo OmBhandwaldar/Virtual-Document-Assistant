@@ -34,7 +34,7 @@ declare const require: (module: string) => {
   };
 };
 
-export async function parsePdf(bufferOrUint8: ArrayBuffer | Uint8Array): Promise<{ text: string }> {
+async function parsePdf(bufferOrUint8: ArrayBuffer | Uint8Array): Promise<{ text: string }> {
   const PDFParser = require("pdf2json");
   
   return new Promise((resolve, reject) => {
