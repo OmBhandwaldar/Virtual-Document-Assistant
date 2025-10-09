@@ -135,9 +135,10 @@ export async function POST(req: Request) {
     }));
 
     return NextResponse.json({ quizId: quiz.id, questions: uiQuestions });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("❌ quiz/generate error:", err);
-    return NextResponse.json({ error: err.message || "Generate failed" }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : "Generate failed";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }

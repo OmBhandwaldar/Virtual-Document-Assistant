@@ -4,6 +4,35 @@ import { supabaseServer } from "@/lib/supabaseClient";
 import { chunkText } from "@/lib/chunker";
 import { randomUUID } from "crypto";
 
+// Type definitions for PDF2JSON
+interface PDFTextRun {
+  T?: string;
+}
+
+interface PDFTextItem {
+  R?: PDFTextRun[];
+}
+
+interface PDFPage {
+  Texts?: PDFTextItem[];
+}
+
+interface PDFData {
+  Pages?: PDFPage[];
+}
+
+interface PDFParserError {
+  parserError?: string;
+}
+
+// Type declaration for pdf2json module
+declare const require: (module: string) => {
+  new (a: null, b: number): {
+    on(event: "pdfParser_dataError", callback: (errData: PDFParserError | string) => void): void;
+    on(event: "pdfParser_dataReady", callback: (pdfData: PDFData) => void): void;
+    parseBuffer: (buffer: Buffer) => void;
+  };
+};
 
 export async function parsePdf(bufferOrUint8: ArrayBuffer | Uint8Array): Promise<{ text: string }> {
   const PDFParser = require("pdf2json");
@@ -11,22 +40,23 @@ export async function parsePdf(bufferOrUint8: ArrayBuffer | Uint8Array): Promise
   return new Promise((resolve, reject) => {
     const pdfParser = new PDFParser(null, 1); // null for no events, 1 for text parsing
     
-    pdfParser.on("pdfParser_dataError", (errData: any) => {
-      console.error("PDF Parser Error:", errData.parserError);
-      reject(errData.parserError);
+    pdfParser.on("pdfParser_dataError", (errData: PDFParserError | string) => {
+      const errorMsg = typeof errData === "object" && errData.parserError ? errData.parserError : errData;
+      console.error("PDF Parser Error:", errorMsg);
+      reject(errorMsg);
     });
     
-    pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+    pdfParser.on("pdfParser_dataReady", (pdfData: PDFData) => {
       try {
         // Extract text from all pages
         let text = "";
         
         if (pdfData && pdfData.Pages) {
-          pdfData.Pages.forEach((page: any) => {
+          pdfData.Pages.forEach((page: PDFPage) => {
             if (page.Texts) {
-              page.Texts.forEach((textItem: any) => {
+              page.Texts.forEach((textItem: PDFTextItem) => {
                 if (textItem.R) {
-                  textItem.R.forEach((run: any) => {
+                  textItem.R.forEach((run: PDFTextRun) => {
                     if (run.T) {
                       // Decode URI component (pdf2json encodes special characters)
                       text += decodeURIComponent(run.T) + " ";
@@ -137,8 +167,9 @@ export async function POST(
       success: true,
       message: `Indexed ${records.length} chunks.`,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Indexing error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
