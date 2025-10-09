@@ -105,7 +105,7 @@ export default function ChatInterface({
                   {message.citation && (
                     <div className="mt-2 pt-2 border-t border-gray-300/30">
                       <p className="text-xs opacity-80">
-                        📄 Page {message.citation.page}: "{message.citation.snippet}"
+                        📄 Page {message.citation.page}: &ldquo;{message.citation.snippet}&rdquo;
                       </p>
                     </div>
                   )}

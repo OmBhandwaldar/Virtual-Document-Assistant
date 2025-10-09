@@ -3,14 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
-  CheckCircle2,
   XCircle,
   RefreshCw,
   Sparkles,
@@ -60,7 +58,6 @@ export default function QuizGenerator({
   const [numLAQ, setNumLAQ] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [quizId, setQuizId] = useState<string | null>(null);
-  const [quizStarted, setQuizStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -93,7 +90,6 @@ export default function QuizGenerator({
       setQuizId(data.quizId);
       setQuestions(data.questions);
       setConfigStep(false);
-      setQuizStarted(true);
       setCurrentQuestion(0);
       setAnswers({});
       setSubmitted(false);
@@ -160,7 +156,6 @@ export default function QuizGenerator({
 
   const handleBackToConfig = () => {
     setConfigStep(true);
-    setQuizStarted(false);
     setSubmitted(false);
     setQuestions([]);
   };
