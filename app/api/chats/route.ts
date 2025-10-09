@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(chat, { status: 201 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Chat creation error:", err);
     return NextResponse.json({ error: "Failed to create chat" }, { status: 500 });
   } finally {
@@ -32,7 +32,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(chats);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error fetching chats:", err);
     return NextResponse.json({ error: "Failed to fetch chats" }, { status: 500 });
   } finally {

@@ -3,6 +3,18 @@ import { supabaseServer } from "@/lib/supabaseClient";
 import { embedQueryGemini } from "@/lib/gemini";
 import { GoogleGenAI } from "@google/genai";
 
+// Type definitions
+interface MatchResult {
+  pdf_id: string;
+  page: number;
+  content: string;
+}
+
+interface Citation {
+  pdfId: string;
+  page: number;
+}
+
 const gemini = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY!,
 });
@@ -33,7 +45,7 @@ export async function POST(req: Request) {
   // 3️⃣ Build context for Gemini
   const context = matches
     .map(
-      (m: any, i: number) =>
+      (m: MatchResult, i: number) =>
         `Excerpt ${i + 1} (PDF: ${m.pdf_id}, p.${m.page}): "${m.content.trim()}"`
     )
     .join("\n\n");
@@ -60,7 +72,7 @@ Answer:
 
   return NextResponse.json({
     answer,
-    citations: matches.map((m: any) => ({
+    citations: matches.map((m: MatchResult): Citation => ({
       pdfId: m.pdf_id,
       page: m.page,
     })),

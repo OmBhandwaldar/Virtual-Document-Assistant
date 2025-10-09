@@ -3,6 +3,13 @@ import { supabaseServer } from "@/lib/supabaseClient";
 import { embedTextsGemini } from "@/lib/gemini";
 import { randomUUID } from "crypto";
 
+// Type definitions
+interface ChunkData {
+  id: string;
+  text: string;
+  page: number;
+}
+
 export const runtime = "nodejs";
 
 /**
@@ -29,11 +36,11 @@ export async function POST(req: Request) {
   }
 
   // 2) Create embeddings in a single batch call to Gemini
-  const texts = chunks.map((c: any) => c.text);
+  const texts = chunks.map((c: ChunkData) => c.text);
   const vectors = await embedTextsGemini(texts, { dim: 1536 });
 
   // 3) Prepare rows for insert
-  const rows = chunks.map((c: any, i: number) => ({
+  const rows = chunks.map((c: ChunkData, i: number) => ({
     id: randomUUID(),
     pdf_id: pdfId,
     chunk_id: c.id,
