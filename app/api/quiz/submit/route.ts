@@ -236,9 +236,10 @@ const detailedResults = questions.map((q) => {
       total: questions.length,
       breakdown: detailedResults,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("quiz/submit error:", err);
-    return NextResponse.json({ error: err.message || "Quiz submit failed" }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : "Quiz submit failed";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }

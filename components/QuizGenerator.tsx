@@ -26,13 +26,25 @@ interface Question {
   explanation: string;
 }
 
+interface QuizAnswer {
+  questionId: string;
+  userAnswer: string;
+  isCorrect: boolean;
+}
+
+interface QuestionTypes {
+  mcq: number;
+  saq: number;
+  laq: number;
+}
+
 interface QuizGeneratorProps {
   onBack: () => void;
   onSaveProgress: (
     score: number,
     total: number,
-    answers: any[],
-    questionTypes: { mcq: number; saq: number; laq: number }
+    answers: QuizAnswer[],
+    questionTypes: QuestionTypes
   ) => void;
   chatId: string;
 }
@@ -86,8 +98,9 @@ export default function QuizGenerator({
       setAnswers({});
       setSubmitted(false);
       setScore(0);
-    } catch (err: any) {
-      setError(err.message || "Failed to start quiz");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to start quiz";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -125,13 +138,21 @@ export default function QuizGenerator({
       setScore(data.score);
       setSubmitted(true);
 
-      onSaveProgress(data.score, data.total, Object.entries(answers), {
+      // Convert answers to QuizAnswer format
+      const quizAnswers: QuizAnswer[] = Object.entries(answers).map(([questionId, userAnswer]) => ({
+        questionId,
+        userAnswer,
+        isCorrect: questions.find(q => q.id === questionId)?.correctAnswer === userAnswer || false,
+      }));
+
+      onSaveProgress(data.score, data.total, quizAnswers, {
         mcq: numMCQ,
         saq: numSAQ,
         laq: numLAQ,
       });
-    } catch (err: any) {
-      setError(err.message || "Error submitting quiz");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Error submitting quiz";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

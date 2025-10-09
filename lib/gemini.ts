@@ -41,8 +41,9 @@ export async function embedTextsGemini(
           console.warn("⚠️ No embeddings returned for this batch");
         }
       allEmbeddings.push(...embeddings);
-    } catch (err: any) {
-      console.error("❌ Embedding batch failed:", err.message || err);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      console.error("❌ Embedding batch failed:", errorMessage);
     }
   }
 

@@ -66,17 +66,25 @@ interface PDFRecord {
   indexedAt?: string | null;
 }
 
+interface QuizAnswer {
+  questionId: string;
+  userAnswer: string;
+  isCorrect: boolean;
+}
+
+interface QuestionTypes {
+  mcq: number;
+  saq: number;
+  laq: number;
+}
+
 interface QuizResult {
   id: string;
   timestamp: Date;
   score: number;
   total: number;
-  answers: any[];
-  questionTypes: {
-    mcq: number;
-    saq: number;
-    laq: number;
-  };
+  answers: QuizAnswer[];
+  questionTypes: QuestionTypes;
 }
 
 export default function Home() {
@@ -288,9 +296,10 @@ export default function Home() {
   
       // 🧩 Success feedback
       setStatus("✅ Uploaded successfully!");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Upload error:", err);
-      setStatus(`❌ Upload failed: ${err.message}`);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      setStatus(`❌ Upload failed: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -384,7 +393,7 @@ export default function Home() {
   // 🔹 Quiz / Progress
   const handleShowQuiz = () => setCurrentView("quiz");
   const handleShowProgress = () => setCurrentView("progress");
-  const handleSaveProgress = (score: number, total: number, answers: any[], questionTypes: any) => {
+  const handleSaveProgress = (score: number, total: number, answers: QuizAnswer[], questionTypes: QuestionTypes) => {
     if (!activeChat) return;
     const quizResult: QuizResult = {
       id: crypto.randomUUID(),

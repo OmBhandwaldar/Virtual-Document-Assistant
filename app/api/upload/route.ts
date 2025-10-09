@@ -123,9 +123,10 @@ export async function POST(req: Request) {
       pdfId: pdfRecord.id,
       chatId,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Unexpected error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 

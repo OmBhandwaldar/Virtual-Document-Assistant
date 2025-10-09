@@ -2,8 +2,16 @@
 
 import { useEffect, useState } from "react";
 
+interface PDFRecord {
+  id: string;
+  title: string;
+  filename: string;
+  storagePath: string;
+  indexedAt?: string | null;
+}
+
 export default function PdfList() {
-  const [pdfs, setPdfs] = useState<any[]>([]);
+  const [pdfs, setPdfs] = useState<PDFRecord[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -20,7 +28,7 @@ export default function PdfList() {
         <div key={pdf.id} className="p-3 border rounded-lg bg-white">
           <p className="font-medium">{pdf.title}</p>
           <p className="text-sm text-gray-500">{pdf.filename}</p>
-          <p className="text-xs text-gray-400">{pdf.preview?.slice(0, 100)}...</p>
+          {/* <p className="text-xs text-gray-400">{pdf.preview?.slice(0, 100)}...</p> */}
         </div>
       ))}
     </div>

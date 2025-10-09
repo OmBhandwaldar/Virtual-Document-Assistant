@@ -23,12 +23,18 @@ import {
   Line,
 } from "recharts";
 
+interface QuizAnswer {
+  questionId: string;
+  userAnswer: string;
+  isCorrect: boolean;
+}
+
 interface QuizResult {
   id: string;
   timestamp: Date;
   score: number;
   total: number;
-  answers: any[];
+  answers: QuizAnswer[];
   questionTypes: {
     mcq: number;
     saq: number;
