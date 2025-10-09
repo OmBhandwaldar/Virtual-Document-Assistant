@@ -3,7 +3,7 @@ import { supabaseServer } from "@/lib/supabaseClient";
 import { embedQueryGemini } from "@/lib/gemini";
 import { GoogleGenAI } from "@google/genai";
 
-const gemini = new GoogleGenAI({
+const gemini = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY!,
 });
 

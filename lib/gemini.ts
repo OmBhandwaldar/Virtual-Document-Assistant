@@ -5,29 +5,48 @@ const GEMINI_DIM = 1536;
 export const gemini = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
-
-/**
- * Embed many texts at once with Gemini (batch).
- */
+ 
 export async function embedTextsGemini(
   texts: string[],
   { dim = GEMINI_DIM } = {}
 ): Promise<number[][]> {
-  if (texts.length === 0) return [];
+  if (!texts.length) return [];
 
-  const res = await gemini.models.embedContent({
-    model: "gemini-embedding-001",
-    contents: texts,  // correct field name
-    config: {
-      outputDimensionality: dim,
-      // (If supported in your SDK) you might supply taskType in config, but skip it if types don't allow
-      // taskType: "RETRIEVAL_DOCUMENT"
-    },
-  });
+  const BATCH_SIZE = 100;
+  const allEmbeddings: number[][] = [];
 
-  // res.embeddings is an array
-  const arrays = (res.embeddings ?? []).map((e) => e.values as number[]);
-  return arrays;
+  for (let i = 0; i < texts.length; i += BATCH_SIZE) {
+    const batch = texts.slice(i, i + BATCH_SIZE);
+    console.log(`Embedding batch ${i / BATCH_SIZE + 1} (${batch.length} items)`);
+
+    try {
+      const res = await gemini.models.embedContent({
+        model: "models/gemini-embedding-001",
+        contents: batch.map((t) => ({ role: "user", parts: [{ text: t }] })),
+        // ✅ Force 1536-dimensional output
+        config: {
+          outputDimensionality: dim,
+        },
+      });
+
+      // ✅ Handle multiple embeddings safely
+      const embeddings = res.embeddings?.map((e) => e.values as number[]) || [];
+        // 🧩 Log embedding length for debugging
+        if (embeddings.length > 0) {
+          console.log(
+            `✅ Got ${embeddings.length} embeddings | Dimension of first vector:`,
+            embeddings[0].length
+          );
+        } else {
+          console.warn("⚠️ No embeddings returned for this batch");
+        }
+      allEmbeddings.push(...embeddings);
+    } catch (err: any) {
+      console.error("❌ Embedding batch failed:", err.message || err);
+    }
+  }
+
+  return allEmbeddings;
 }
 
 /**

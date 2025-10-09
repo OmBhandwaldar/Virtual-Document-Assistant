@@ -4,7 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 const gemini = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
-
+ 
 // GET /api/gemini/list-models
 export async function GET() {
   try {
