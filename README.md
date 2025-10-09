@@ -1,4 +1,4 @@
-# BeyondChats Assignment — AI-Powered Learning Assistant([Demo Link](https://drive.google.com/file/d/1JWB3EN4FlL6XKZiTanmKvzipE2UXHdNI/view?usp=drive_link))
+# BeyondChats Assignment — AI-Powered Learning Assistant([Live App](https://virtual-document-assistant-fkj9.vercel.app/))([Demo Video](https://drive.google.com/file/d/1JWB3EN4FlL6XKZiTanmKvzipE2UXHdNI/view?usp=drive_link))
 
 ### Built by Om Bhandwaldar
 
