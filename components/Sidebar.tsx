@@ -81,14 +81,14 @@ export default function Sidebar({
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed lg:relative inset-y-0 left-0 z-50 w-[280px] bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed lg:relative inset-y-0 left-0 z-50 w-[380px] bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-xl text-center font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Document Assistant
             </h1>
             <Button
@@ -169,7 +169,7 @@ export default function Sidebar({
                   <div
                     key={pdf.id}
                     className={cn(
-                      "w-full text-left px-3 py-2.5 rounded-lg transition-all border hover:bg-white hover:shadow-sm mb-1",
+                      "w-full text-left px-3 py-2.5 rounded-lg transition-all border hover:bg-white hover:shadow-sm mb-1 hover:cursor-pointer",
                       activePDF === pdf.id
                         ? "bg-white shadow-md border-purple-300"
                         : "border-gray-200"
@@ -188,7 +188,7 @@ export default function Sidebar({
                     </div>
 
                     {/* Index + Embed controls */}
-                    <div className="flex gap-2 mt-2">
+                    {/* <div className="flex gap-2 mt-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -219,10 +219,10 @@ export default function Sidebar({
                         )}
                         Embed
                       </Button>
-                    </div>
+                    </div> */}
 
                     {/* Status */}
-                    {pdf.indexedAt ? (
+                    {/* {pdf.indexedAt ? (
                       <p className="text-xs text-green-600 mt-1">
                         ✅ Indexed
                       </p>
@@ -230,7 +230,7 @@ export default function Sidebar({
                       <p className="text-xs text-gray-500 mt-1">
                         Not indexed
                       </p>
-                    )}
+                    )} */}
                   </div>
                 ))
               )}
