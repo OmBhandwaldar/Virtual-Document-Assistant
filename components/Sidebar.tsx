@@ -66,7 +66,7 @@ export default function Sidebar({
   status,
   isBusy,
 }: SidebarProps) {
-  const [activeTab, setActiveTab] = useState<"chats" | "pdfs">("pdfs");
+  const [activeTab, setActiveTab] = useState<"chats" | "pdfs">("chats");
 
   return (
     <>
