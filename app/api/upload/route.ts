@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseClient";
 import { extractPreview } from "@/lib/pdfUtils";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { parsePdf } from "@/lib/pdfParser"; // ✅ added
 import { chunkText } from "@/lib/chunker"; // ✅ added
 import { embedTextsGemini } from "@/lib/gemini";
@@ -24,13 +24,12 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const supabase = supabaseServer();
-    const prisma = new PrismaClient(); // ✅ moved up for reuse
+    // Using optimized prisma client
 
     // ✅ validate chat exists
     if (chatId) {
       const chatExists = await prisma.chat.findUnique({ where: { id: chatId } });
       if (!chatExists) {
-        await prisma.$disconnect();
         return NextResponse.json({ error: "Invalid chatId" }, { status: 400 });
       }
     }
@@ -115,7 +114,7 @@ export async function POST(req: Request) {
     });
 
     console.log("✅ Auto-indexing complete");
-    await prisma.$disconnect();
+    // Prisma client is managed globally
 
     return NextResponse.json({
       success: true,
@@ -134,7 +133,7 @@ export async function POST(req: Request) {
 // import { NextResponse } from "next/server";
 // import { supabaseServer } from "@/lib/supabaseClient";
 // import { extractPreview } from "@/lib/pdfUtils";
-// import { PrismaClient } from "@/lib/generated/prisma";
+// import { prisma } from "@/lib/prisma";
 
 // export const runtime = "nodejs"; // ensure it runs on server
 
@@ -179,7 +178,7 @@ export async function POST(req: Request) {
 //         if (chatId) {
 //           const chatExists = await prisma.chat.findUnique({ where: { id: chatId } });
 //           if (!chatExists) {
-//             await prisma.$disconnect();
+//             // Prisma client is managed globally
 //             return NextResponse.json({ error: "Invalid chatId" }, { status: 400 });
 //           }
 //         }
@@ -209,7 +208,7 @@ export async function POST(req: Request) {
 //       console.error("Database insert error:", insertError);
 //       return NextResponse.json({ error: "Failed to save PDF record" }, { status: 500 });
 //     } finally {
-//       await prisma.$disconnect();
+//       // Prisma client is managed globally
 //     }
 
 //     console.log("Successfully uploaded and saved to database");

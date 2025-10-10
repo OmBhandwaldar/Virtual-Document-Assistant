@@ -1,5 +1,5 @@
 // import { NextResponse } from "next/server";
-// import { PrismaClient } from "@/lib/generated/prisma";
+// import { prisma } from "@/lib/prisma";
 
 // export const runtime = "nodejs";
 
@@ -105,18 +105,17 @@
 //       { status: 500 }
 //     );
 //   } finally {
-//     await prisma.$disconnect();
+//     // Prisma client is managed globally
 //   }
 // }
 
 
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const prisma = new PrismaClient();
   try {
     const body = await req.json();
     const { chatId, quizId, answers } = body;
@@ -241,6 +240,6 @@ const detailedResults = questions.map((q) => {
     const errorMessage = err instanceof Error ? err.message : "Quiz submit failed";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    // Prisma client is managed globally
   }
 }

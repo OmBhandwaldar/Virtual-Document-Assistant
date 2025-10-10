@@ -1,6 +1,7 @@
 // app/api/quiz/generate/route.ts
 import { NextResponse } from "next/server";
-import { Prisma, PrismaClient } from "@/lib/generated/prisma";
+import { Prisma } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { buildQuizPrompt, safeJsonParse } from "@/lib/prompt";
 import { gemini } from "@/lib/gemini";
 
@@ -9,7 +10,7 @@ export const runtime = "nodejs";
 type Counts = { mcq: number; saq: number; laq: number };
 
 export async function POST(req: Request) {
-  const prisma = new PrismaClient();
+  // Using optimized prisma client
 
   try {
     const body = await req.json();
@@ -140,6 +141,6 @@ export async function POST(req: Request) {
     const errorMessage = err instanceof Error ? err.message : "Generate failed";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    // Prisma client is managed globally
   }
 }

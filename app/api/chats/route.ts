@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
@@ -20,8 +18,6 @@ export async function POST(req: Request) {
   } catch (err: unknown) {
     console.error("Chat creation error:", err);
     return NextResponse.json({ error: "Failed to create chat" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -35,7 +31,5 @@ export async function GET() {
   } catch (err: unknown) {
     console.error("Error fetching chats:", err);
     return NextResponse.json({ error: "Failed to fetch chats" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
