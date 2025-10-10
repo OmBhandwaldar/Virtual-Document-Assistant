@@ -165,7 +165,8 @@ export default function ProgressDashboard({ onBack, quizHistory }: ProgressDashb
 
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-purple-50 to-blue-50">
-      <div className="p-4 border-b border-gray-200 bg-white">
+      {/* Fixed Header */}
+      <div className="flex-shrink-0 p-4 border-b border-gray-200 bg-white">
         <Button variant="ghost" onClick={onBack} className="mb-2">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Chat
@@ -174,7 +175,8 @@ export default function ProgressDashboard({ onBack, quizHistory }: ProgressDashb
         <p className="text-sm text-gray-600">Track your learning journey for this chat</p>
       </div>
 
-      <ScrollArea className="flex-1">
+      {/* Scrollable Content */}
+      <ScrollArea className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6 space-y-6">
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
