@@ -211,9 +211,9 @@ export default function QuizGenerator({
               Choose how many questions you want for each type
             </p>
 
-            <div className="space-y-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {/* MCQs */}
-              <div className="bg-purple-50 rounded-xl p-6">
+              <div className="bg-purple-50 rounded-xl p-6 flex-1">
                 <Label htmlFor="mcq-count" className="text-lg font-semibold mb-2 block">
                   MCQs
                 </Label>
@@ -230,7 +230,7 @@ export default function QuizGenerator({
               </div>
 
               {/* SAQs */}
-              <div className="bg-blue-50 rounded-xl p-6">
+              <div className="bg-blue-50 rounded-xl p-6 flex-1">
                 <Label htmlFor="saq-count" className="text-lg font-semibold mb-2 block">
                   SAQs
                 </Label>
@@ -247,7 +247,7 @@ export default function QuizGenerator({
               </div>
 
               {/* LAQs */}
-              <div className="bg-indigo-50 rounded-xl p-6">
+              <div className="bg-indigo-50 rounded-xl p-6 flex-1">
                 <Label htmlFor="laq-count" className="text-lg font-semibold mb-2 block">
                   LAQs
                 </Label>

@@ -479,7 +479,7 @@ export default function Home() {
           >
             {showPDFViewer && (
               <>
-                <div className="absolute right-4 top-4 z-10">
+                <div className="absolute right-4 top-16 z-10">
                   <Button
                     variant="outline"
                     size="icon"
