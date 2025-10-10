@@ -45,7 +45,7 @@ Students/Users can upload course PDFs (like NCERT Physics books), generate quizz
 
 ---
 
-## 🧭 Getting Started: High-Level Workflow
+## Getting Started: High-Level Workflow
 
 1. **Click "New Chat"** to create a chat session.  
 2. **Select the chat** from the sidebar.  
